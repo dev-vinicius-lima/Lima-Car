@@ -1,5 +1,42 @@
-function App() {
-  return <h1 className="text-3xl font-bold underline">Hello world!</h1>;
-}
+import { createBrowserRouter } from "react-router-dom";
+import Home from "./pages/Home";
+import CarDetail from "./pages/car";
+import Dashboard from "./pages/dashboard";
+import Login from "./pages/login";
+import Register from "./pages/register";
+import Layout from "./components/Layout";
+import New from "./pages/dashboard/new";
 
-export default App;
+const router = createBrowserRouter([
+  {
+    element: <Layout />,
+    children: [
+      {
+        path: "/",
+        element: <Home />,
+      },
+      {
+        path: "/car/:id",
+        element: <CarDetail />,
+      },
+      {
+        path: "/dashboard",
+        element: <Dashboard />,
+      },
+      {
+        path: "/dashboard/new",
+        element: <New />,
+      },
+    ],
+  },
+  {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "/register",
+    element: <Register />,
+  },
+]);
+
+export { router };
