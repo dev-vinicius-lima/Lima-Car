@@ -1,3 +1,4 @@
+import { useEffect, useContext } from "react";
 import logoImg from "../../assets/logo.svg";
 import Input from "../../components/Input";
 import Container from "../../components/container";
@@ -11,7 +12,8 @@ import {
   signOut,
   updateProfile,
 } from "firebase/auth";
-import { useEffect } from "react";
+import { AuthContext } from "../../context/AuthContext";
+
 const schema = z.object({
   name: z.string().nonempty("O campo nome é obrigatório"),
   email: z
@@ -27,6 +29,7 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 const Register = () => {
+  const { handleInfoUser } = useContext(AuthContext);
   const navigate = useNavigate();
   const {
     register,
@@ -49,6 +52,11 @@ const Register = () => {
       .then(async (user) => {
         await updateProfile(user.user, {
           displayName: data.name,
+        });
+        handleInfoUser({
+          name: data.name,
+          email: data.email,
+          uid: user.user.uid,
         });
         console.log("CADASTRADO !");
         navigate("/dashboard", { replace: true });
