@@ -1,11 +1,17 @@
 import logoImg from "../../assets/logo.svg";
 import Input from "../../components/Input";
 import Container from "../../components/container";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-
+import { auth } from "../../services/firebaseConnect";
+import {
+  createUserWithEmailAndPassword,
+  signOut,
+  updateProfile,
+} from "firebase/auth";
+import { useEffect } from "react";
 const schema = z.object({
   name: z.string().nonempty("O campo nome é obrigatório"),
   email: z
@@ -21,6 +27,7 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 const Register = () => {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -30,8 +37,26 @@ const Register = () => {
     mode: "onChange",
   });
 
+  useEffect(() => {
+    async function handleLogout() {
+      await signOut(auth);
+    }
+    handleLogout();
+  }, []);
+
   function onsubmit(data: FormData) {
-    console.log(data);
+    createUserWithEmailAndPassword(auth, data.email, data.password)
+      .then(async (user) => {
+        await updateProfile(user.user, {
+          displayName: data.name,
+        });
+        console.log("CADASTRADO !");
+        navigate("/dashboard", { replace: true });
+      })
+      .catch((error) => {
+        console.log("Erro ao cadastrar!");
+        console.log(error);
+      });
   }
 
   return (
@@ -77,7 +102,7 @@ const Register = () => {
             type="submit"
             className="bg-zinc-900 w-full rounded-lg text-white h-8 font-medium opacity-100 hover:opacity-95 transition-all"
           >
-            Acessar
+            Cadastrar
           </button>
         </form>
         <Link to={"/login"}>Já possui uma conta? Faça o login!</Link>
