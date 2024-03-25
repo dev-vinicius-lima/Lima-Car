@@ -13,6 +13,7 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { AuthContext } from "../../context/AuthContext";
+import toast from "react-hot-toast";
 
 const schema = z.object({
   name: z.string().nonempty("O campo nome é obrigatório"),
@@ -59,11 +60,13 @@ const Register = () => {
           uid: user.user.uid,
         });
         console.log("CADASTRADO !");
+        toast.success("Cadastrado com sucesso!");
         navigate("/dashboard", { replace: true });
       })
       .catch((error) => {
         console.log("Erro ao cadastrar!");
         console.log(error);
+        toast.error("Erro ao cadastrar conta!");
       });
   }
 
@@ -71,7 +74,7 @@ const Register = () => {
     <Container>
       {" "}
       <div className="w-full h-screen flex justify-center items-center flex-col gap-4">
-        <Link to={"/"} className="mb-6 max-w-sm w-full">
+        <Link to={"/"} className="mb-6 max-w-sm w-full rounded-lg">
           <img src={logoImg} alt="logo do site" className="w-full" />
         </Link>
         <form

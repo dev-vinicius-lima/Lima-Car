@@ -8,7 +8,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { auth } from "../../services/firebaseConnect";
-
+import toast from "react-hot-toast";
 const schema = z.object({
   email: z
     .string()
@@ -21,7 +21,6 @@ type FormData = z.infer<typeof schema>;
 
 const Login = () => {
   const navigate = useNavigate();
-
   const {
     register,
     handleSubmit,
@@ -43,17 +42,18 @@ const Login = () => {
       .then((user) => {
         console.log("Logado com sucesso!");
         console.log(user);
+        toast.success("Logado com sucesso!");
         navigate("/dashboard", { replace: true });
       })
       .catch((error) => {
         console.log("Erro ao logar");
         console.log(error);
+        toast.error("Erro ao fazer o login!");
       });
   }
 
   return (
     <Container>
-      {" "}
       <div className="w-full h-screen flex justify-center items-center flex-col gap-4">
         <Link to={"/"} className="mb-6 max-w-sm w-full">
           <img src={logoImg} alt="logo do site" className="w-full" />
@@ -71,7 +71,7 @@ const Login = () => {
               register={register}
             />
           </div>
-          <div className="mb-3">
+          <div className="mb-3 ">
             <Input
               type="password"
               placeholder="Digite sua senha..."
