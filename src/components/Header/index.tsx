@@ -16,7 +16,11 @@ const Header = () => {
     <div className="w-full flex items-center justify-center h-18 bg-white drop-shadow mb-4">
       <header className="flex w-full max-w-7xl items-center justify-between px-10 mx-auto">
         <Link to={"/"}>
-          <img src={logoLima} alt="logo do site" className="w-full h-20" />
+          <img
+            src={logoLima}
+            alt="logo do site"
+            className="w-full h-20 object-cover "
+          />
         </Link>
         {!loadingAuth && signed && (
           <Link to={"/dashboard"} className="flex gap-3">
