@@ -16,15 +16,15 @@ import { AuthContext } from "../../context/AuthContext";
 import toast from "react-hot-toast";
 
 const schema = z.object({
-  name: z.string().nonempty("O campo nome é obrigatório"),
+  name: z.string().min(1, "O campo nome é obrigatório"),
   email: z
     .string()
     .email("Insira um email válido!")
-    .nonempty("O campo email é obrigatório"),
+    .min(1, "O campo email é obrigatório"),
   password: z
     .string()
     .min(6, "A senha deve ter pelo menos 6 caracteres")
-    .nonempty("o campo senha é obrigatório"),
+    .min(1, "o campo senha é obrigatório"),
 });
 
 type FormData = z.infer<typeof schema>;
