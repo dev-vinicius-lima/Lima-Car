@@ -10,7 +10,8 @@ import {
   doc,
   deleteDoc,
 } from "firebase/firestore";
-import { db } from "../../services/firebaseConnect";
+import { db, storage } from "../../services/firebaseConnect";
+import { ref, deleteObject } from "firebase/storage";
 import { AuthContext } from "../../context/AuthContext";
 
 interface CarProps {
@@ -62,10 +63,22 @@ const Dashboard = () => {
     loadCars();
   }, [user]);
 
-  async function handleDeleteCar(id: string) {
-    const docRef = doc(db, "cars", id);
+  async function handleDeleteCar(car: CarProps) {
+    const itemCar = car;
+
+    const docRef = doc(db, "cars", itemCar.id);
     await deleteDoc(docRef);
-    setCars(cars.filter((car) => car.id !== id));
+    // deletando imagem do banco
+    itemCar.images.map(async (image) => {
+      const imagePath = `images/${image.uid}/${image.name}`;
+      const imageRef = ref(storage, imagePath);
+      try {
+        await deleteObject(imageRef);
+        setCars(cars.filter((car) => car.id !== itemCar.id));
+      } catch (error) {
+        console.log("ERRO AO EXCLUIR ESTA IMAGEM", error);
+      }
+    });
   }
 
   return (
@@ -75,7 +88,7 @@ const Dashboard = () => {
         {cars.map((car) => (
           <section className="w-full bg-white rounded-lg relative" key={car.id}>
             <button
-              onClick={() => handleDeleteCar(car.id)}
+              onClick={() => handleDeleteCar(car)}
               className="absolute right-2 top-2 bg-white w-14 h-14 rounded-full flex items-center justify-center drop-shadow"
             >
               <FiTrash2 size={30} color="#000" />
